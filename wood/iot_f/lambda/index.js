@@ -46,7 +46,7 @@ exports.handler = async (event) => {
         }
     } // routeKey device/{device_id}
     
-    console.log("not a routeKey dveice: "+event.routeKey);
+    console.log("unhandled routeKey: "+event.routeKey);
     //let body = {};
     /*
     if (event.body !== null && event.body !== undefined) {
@@ -66,11 +66,11 @@ exports.handler = async (event) => {
         };
         return response
     }  else if (event.requestContext.http.method=="OPTIONS") {
+        // if we receive an OPTIONS method we need to respond with a CORS allowed header
         const response = {
             statusCode: 200,
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Credentials': true,
-            //'Access-Control-Expose-Headers': 'Content-Type,x-api-key,X-Amz-Date,Authorization,x-api-key,x-amz-security-token,Auth',
             'Access-Control-Allow-Headers': 'x-www-form-urlencoded, Origin, X-Requested-With, Content-Type, Accept, Authorization',
             'Content-Type': 'application/json',
             body: 'Options allowed: '+event.routeKey
