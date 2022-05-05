@@ -1,6 +1,5 @@
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
-
 // Set the region 
 AWS.config.update({region: 'us-west-1'});
 
@@ -22,15 +21,16 @@ async function createItem(){
   const params = {
   TableName : 'io1',
   Item: {
-     uname: 'wood',
-     uid: '1234',
-     price: 100.00
+     'uname': {S: 'wood'},
+     'uid': {S: '1234'},
+     'price': {S:'100.00'},
     }
   }
   
   try {
     console.log("calling ddb put params");
-    let result = await ddb.put(params).promise().promise();
+    let result = await ddb.putItem(params).promise();
+    console.log("done calling ddb put");
     return result;
   } catch (err) {
     return err;
@@ -56,6 +56,7 @@ exports.handler = async (event) => {
     }
     
     console.log("lambda done");
+    
 
   return response;
 };
