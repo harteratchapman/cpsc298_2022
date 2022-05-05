@@ -21,20 +21,34 @@ async function createItem(){
   const params = {
   TableName : 'io1',
   Item: {
-     'uname': {S: 'wood'},
-     'uid': {S: '1234'},
+     'uname': {S: 'wood2'},
+     'uid': {S: '1243'},
      'price': {S:'100.00'},
     }
   }
   
   try {
-    console.log("calling ddb put params");
     let result = await ddb.putItem(params).promise();
-    console.log("done calling ddb put");
     return result;
   } catch (err) {
     return err;
   }
+}
+
+async function listItems() {
+    const params = {
+        TableName: "io1",
+    };
+
+    let scanResults = [];
+    let items = [];
+    do{
+        items =  await ddb.scan(params).promise();
+        items.Items.forEach((item) => scanResults.push(item));
+        params.ExclusiveStartKey  = items.LastEvaluatedKey;
+    } while(typeof items.LastEvaluatedKey !== "undefined");
+    
+    return scanResults;
 }
 
 exports.handler = async (event) => {
@@ -44,9 +58,11 @@ exports.handler = async (event) => {
     };
     
     console.log("I'm listing tables");
-    let await_result = await listTables();
-    console.log("await_result = "+JSON.stringify(await_result));
+    let tables_result = await listTables();
+    console.log("tables_result = "+JSON.stringify(tables_result));
 
+    // this is a sample, uncomment to create a new item
+/*
     try {
       let create_result = await createItem();
       console.log("result = "+JSON.stringify(create_result));
@@ -54,7 +70,16 @@ exports.handler = async (event) => {
     } catch (err) {
       return { error: err }
     }
-    
+*/
+
+    try {
+      let list_result = await listItems();
+      console.log("result = "+JSON.stringify(list_result));
+      return { body: JSON.stringify(list_result) }
+    } catch (err) {
+      return { error: err }
+    }
+
     console.log("lambda done");
     
 
